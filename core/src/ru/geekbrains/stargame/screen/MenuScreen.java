@@ -1,83 +1,62 @@
 package ru.geekbrains.stargame.screen;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-
-import java.awt.event.MouseMotionListener;
-
-import javax.swing.JButton;
-
 import ru.geekbrains.stargame.base.BaseScreen;
-
-import static com.badlogic.gdx.math.Vector2.dot;
-import static java.lang.Math.acos;
+import ru.geekbrains.stargame.exception.GameException;
+import ru.geekbrains.stargame.math.Rect;
+import ru.geekbrains.stargame.sprites.Background;
 
 public class MenuScreen extends BaseScreen
 {
-    private Texture img;
+    private Texture bg;
+    private Background background;
     private Vector2 pos;
-    private Vector2 v;
-    private Vector2 touch;
-    private Vector2 tmp;
 
-    @Override
-    public void show() {
+    public MenuScreen()
+    {
         super.show();
-        img = new Texture("badlogic.jpg");
+        bg = new Texture("textures/bg.png");
+        try {
+            background = new Background(bg);
+        } catch (GameException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
         pos = new Vector2();
-        v = new Vector2();
-        touch = new Vector2();
-        tmp = new Vector2();
     }
 
-    @Override
-    public void render(float delta)
+    public void render(SpriteBatch batch)
     {
-        update(delta);
-        draw();
+        draw(batch);
     }
 
     @Override
     public void dispose()
     {
         batch.dispose();
-        img.dispose();
+        bg.dispose();
         super.dispose();
     }
 
     @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button)
+    public void resize(Rect worldBounds)
     {
-        touch.set(screenX, Gdx.graphics.getHeight() - screenY);
-        v.set(touch.cpy().sub(pos)).setLength(V_LEN);
+        background.resize(worldBounds);
+    }
+
+    @Override
+    public boolean touchDown(Vector2 touch, int pointer, int button)
+    {
+        pos.set(touch);
         return false;
     }
 
-    private void update (float delta)
+    private void draw(SpriteBatch batch)
     {
-        tmp.set(touch);
-        float remainingDistance = (tmp.sub(pos).len());
-        if (remainingDistance = V_LEN)
-        {
-            pos.add(v);
-        }
-        else
-        {
-            v.setZero();
-            pos.set(touch);
-        }
-    }
-
-    private void draw ()
-    {
-        Gdx.gl.glClearColor(0.5f, 0.7f, 0.8f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-        batch.draw(img, pos.x, pos.y);
+        batch.draw(bg, 0, 0);
         batch.end();
     }
-
 }
