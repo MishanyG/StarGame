@@ -1,6 +1,7 @@
 package ru.geekbrains.stargame.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -9,7 +10,10 @@ import com.badlogic.gdx.math.Vector2;
 import ru.geekbrains.stargame.base.BaseScreen;
 import ru.geekbrains.stargame.exception.GameException;
 import ru.geekbrains.stargame.math.Rect;
+import ru.geekbrains.stargame.pool.BulletPool;
+import ru.geekbrains.stargame.pool.EnemyPool;
 import ru.geekbrains.stargame.sprites.Background;
+import ru.geekbrains.stargame.sprites.Enemy;
 import ru.geekbrains.stargame.sprites.Ship;
 import ru.geekbrains.stargame.sprites.Star;
 
@@ -19,17 +23,24 @@ public class GameScreen extends BaseScreen {
 
     private Texture bg;
     private Background background;
+    private Music fonMus;
 
     private TextureAtlas atlas;
 
     private Star[] stars;
+    private BulletPool bulletPool;
     private Ship ship;
+    private Enemy enemy;
+    private EnemyPool enemyPool;
 
     @Override
     public void show() {
         super.show();
         bg = new Texture("textures/bg.png");
         atlas = new TextureAtlas(Gdx.files.internal("textures/mainAtlas.tpack"));
+        fonMus = Gdx.audio.newMusic(Gdx.files.internal("sounds/music.mp3"));
+        bulletPool = new BulletPool();
+        enemyPool = new EnemyPool();
         initSprites();
     }
 
@@ -37,23 +48,31 @@ public class GameScreen extends BaseScreen {
     public void render(float delta) {
         super.render(delta);
         update(delta);
+        freeAllDestroyed();
         draw();
     }
 
     @Override
-    public void resize(Rect worldBounds) {
+    public void resize(Rect worldBounds)
+    {
         super.resize(worldBounds);
         background.resize(worldBounds);
-        for (Star star : stars) {
+        for (Star star : stars)
+        {
             star.resize(worldBounds);
         }
         ship.resize(worldBounds);
+        enemy.resize(worldBounds);
     }
 
     @Override
-    public void dispose() {
+    public void dispose()
+    {
         bg.dispose();
         atlas.dispose();
+        bulletPool.dispose();
+        enemyPool.dispose();
+        fonMus.dispose();
         super.dispose();
     }
 
@@ -85,24 +104,41 @@ public class GameScreen extends BaseScreen {
         return false;
     }
 
-    private void initSprites() {
+    private void initSprites()
+    {
         try {
             background = new Background(bg);
             stars = new Star[STAR_COUNT];
-            for (int i = 0; i < STAR_COUNT; i++) {
+            for (int i = 0; i < STAR_COUNT; i++)
+            {
                 stars[i] =  new Star(atlas);
             }
-            ship = new Ship(atlas);
-        } catch (GameException e) {
+            ship = new Ship(atlas, bulletPool);
+            enemy = new Enemy(atlas, enemyPool);
+        } catch (GameException e)
+        {
             throw new RuntimeException(e);
         }
+        fonMus.play();
     }
 
-    private void update(float delta) {
-        for (Star star : stars) {
+    private void update(float delta)
+    {
+        for (Star star : stars)
+        {
             star.update(delta);
         }
+        fonMus.setLooping(true);
         ship.update(delta);
+        enemy.update(delta);
+        enemyPool.updateActiveSprites(delta);
+        bulletPool.updateActiveSprites(delta);
+    }
+
+    public void freeAllDestroyed()
+    {
+        bulletPool.freeAllDestroyedActiveObjects();
+        enemyPool.freeAllDestroyedActiveObjects();
     }
 
     private void draw() {
@@ -114,6 +150,8 @@ public class GameScreen extends BaseScreen {
             star.draw(batch);
         }
         ship.draw(batch);
+        enemyPool.drawActiveSprites(batch);
+        bulletPool.drawActiveSprites(batch);
         batch.end();
     }
 }
