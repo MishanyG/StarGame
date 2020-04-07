@@ -1,50 +1,48 @@
 package ru.geekbrains.stargame.sprites;
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import ru.geekbrains.stargame.base.Sprite;
-import ru.geekbrains.stargame.exception.GameException;
+import ru.geekbrains.stargame.base.Ships;
 import ru.geekbrains.stargame.math.Rect;
-import ru.geekbrains.stargame.pool.EnemyPool;
+import ru.geekbrains.stargame.pool.BulletPool;
 
-public class Enemy extends Sprite
+public class Enemy extends Ships
 {
-    private static final float animateInterval = 0.7f;
-    private float animateTimer = 0.5f;
-
-    private Rect worldBounds;
-    private EnemyPool enemyPool;
-    private TextureRegion enemyRegion;
-    private Vector2 enemyV;
-
-    public Enemy(TextureAtlas atlas, EnemyPool enemyPool) throws GameException {
-        super(atlas.findRegion("enemy2"), 1, 2, 2);
-        this.enemyPool = enemyPool;
-        enemyRegion = atlas.findRegion("enemy2");
-        enemyRegion.setRegionWidth(enemyRegion.getRegionWidth()/2);
-        enemyV = new Vector2(0, -0.5f);
-    }
-    @Override
-    public void resize(Rect worldBounds)
+    public Enemy(BulletPool bulletPool, Rect worldBounds)
     {
+        this.bulletPool = bulletPool;
         this.worldBounds = worldBounds;
+        v = new Vector2();
+        v0 = new Vector2();
+        bulletV = new Vector2();
     }
 
     @Override
     public void update(float delta)
     {
-        animateTimer += delta;
-        if (animateTimer >= animateInterval) {
-            nextSh();
-            animateTimer = 0;
+        super.update(delta);
+        if (getBottom() <= worldBounds.getBottom())
+        {
+            destroy();
         }
     }
 
-    public void nextSh()
+    public void set(TextureRegion[] regions, Vector2 v0, TextureRegion bulletRegion, float bulletHeight, float bulletVY,
+                    int damage, float reloadInterval, Sound shootSound, int hp, float height)
     {
-        EnemyShip enemyShip = enemyPool.obtain();
-        enemyShip.set(this, enemyRegion, pos, enemyV, 0.15f, worldBounds, 1);
+        this.regions = regions;
+        this.v0.set(v0);
+        this.bulletRegion = bulletRegion;
+        this.bulletHeight = bulletHeight;
+        this.bulletV.set(0, bulletVY);
+        this.damage = damage;
+        this.animateInterval = reloadInterval;
+        this.animateTimer = animateInterval;
+        this.shootSound = shootSound;
+        this.hp = hp;
+        this.v.set(v0);
+        setHeightProportion(height);
     }
 }

@@ -5,16 +5,15 @@ import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.stargame.base.Sprite;
 import ru.geekbrains.stargame.math.Rect;
-import ru.geekbrains.stargame.math.Rnd;
 
-public class EnemyShip extends Sprite
+public class Bullet extends Sprite
 {
     private Rect worldBounds;
     private final Vector2 v = new Vector2();
     private int damage;
     private Object owner;
 
-    public EnemyShip()
+    public Bullet()
     {
         regions = new TextureRegion[1];
     }
@@ -26,9 +25,6 @@ public class EnemyShip extends Sprite
         this.pos.set(pos0);
         this.v.set(v0);
         setHeightProportion(height);
-        setTop(worldBounds.getTop() + 0.13f);
-        float posX = Rnd.nextFloat(worldBounds.getLeft(), worldBounds.getRight());
-        this.pos.set(posX, pos.y);
         this.worldBounds = worldBounds;
         this.damage = damage;
     }
@@ -38,5 +34,13 @@ public class EnemyShip extends Sprite
     {
         pos.mulAdd(v, delta);
         if (isOutside(worldBounds)) destroy();
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public Object getOwner() {
+        return owner;
     }
 }
