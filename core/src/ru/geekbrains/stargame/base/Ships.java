@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.stargame.exception.GameException;
 import ru.geekbrains.stargame.math.Rect;
+import ru.geekbrains.stargame.pool.BulletHeroPool;
 import ru.geekbrains.stargame.pool.BulletPool;
 import ru.geekbrains.stargame.sprites.Bullet;
 
@@ -13,6 +14,7 @@ public abstract class Ships extends Sprite
 {
     protected Rect              worldBounds;
     protected BulletPool        bulletPool;
+    protected BulletHeroPool    bulletHeroPool;
     protected TextureRegion     bulletRegion;
     protected Vector2           bulletV;
     protected float             bulletHeight;

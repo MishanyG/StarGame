@@ -22,11 +22,13 @@ public class Enemy extends Ships
     @Override
     public void update(float delta)
     {
-        super.update(delta);
+        Vector2 vec = new Vector2(0f, -0.5f);
+        if (worldBounds.getHalfHeight() <= (pos.y * 1.2f))
+            pos.mulAdd(vec, delta);
+        else
+            super.update(delta);
         if (getBottom() <= worldBounds.getBottom())
-        {
             destroy();
-        }
     }
 
     public void set(TextureRegion[] regions, Vector2 v0, TextureRegion bulletRegion, float bulletHeight, float bulletVY,
