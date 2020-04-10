@@ -8,9 +8,11 @@ import com.badlogic.gdx.math.Vector2;
 import ru.geekbrains.stargame.base.Ships;
 import ru.geekbrains.stargame.exception.GameException;
 import ru.geekbrains.stargame.math.Rect;
-import ru.geekbrains.stargame.pool.BulletHeroPool;
+import ru.geekbrains.stargame.pool.BulletPool;
+import ru.geekbrains.stargame.pool.ExplosionPool;
 
 public class ShipHero extends Ships {
+    private static final int HP = 100;
 
     private static final int INV_POINT = -1;
 
@@ -19,17 +21,19 @@ public class ShipHero extends Ships {
     private int     leftPoint   = INV_POINT;
     private int     rightPoint  = INV_POINT;
 
-    public ShipHero(TextureAtlas atlas, BulletHeroPool bulletHeroPool, Sound shootSound) throws GameException {
+    public ShipHero(TextureAtlas atlas, BulletPool bulletPool, ExplosionPool explosionPool, Sound shootSound) throws GameException {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
-        this.bulletHeroPool = bulletHeroPool;
+        this.bulletPool     = bulletPool;
+        this.explosionPool  = explosionPool;
         this.shootSound     = shootSound;
             bulletRegion    = atlas.findRegion("bulletMainShip");
             bulletV         = new Vector2(0, 0.5f);
+            bulletPos       = new Vector2();
             v0              = new Vector2(0.5f, 0);
             v               = new Vector2();
             bulletHeight    = 0.01f;
             damage          = 1;
-            hp              = 100;
+            hp              = HP;
             animateInterval = 0.2f;
             animateTimer    = animateInterval;
     }
@@ -150,13 +154,10 @@ public class ShipHero extends Ships {
     @Override
     public void update(float delta)
     {
+        super.update(delta);
+        bulletPos.set(pos.x, pos.y + getHalfHeight());
         pos.mulAdd(v, delta);
-        animateTimer += delta;
-        if (animateTimer >= animateInterval)
-        {
-            shootHero();
-            animateTimer = 0f;
-        }
+        autoShoot(delta);
         if (getLeft() < worldBounds.getLeft())
         {
             setLeft(worldBounds.getLeft());
@@ -168,12 +169,12 @@ public class ShipHero extends Ships {
             stop();
         }
     }
-    private void shootHero()
+
+    public boolean isBulletCollision(Rect bullet)
     {
-        Bullet bullet = bulletHeroPool.obtain();
-        bullet.set(this, bulletRegion, pos, bulletV, bulletHeight, worldBounds, damage);
-        shootSound.play(0.1f);
+        return !(bullet.getRight() < getLeft() || bullet.getLeft() > getRight() || bullet.getBottom() > pos.y || bullet.getTop() < getBottom());
     }
+
     private void moveRight ()
     {
         v.set(v0);
