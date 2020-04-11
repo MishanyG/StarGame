@@ -1,5 +1,6 @@
 package ru.geekbrains.stargame.screen;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -18,6 +19,7 @@ import ru.geekbrains.stargame.pool.EnemyPool;
 import ru.geekbrains.stargame.pool.ExplosionPool;
 import ru.geekbrains.stargame.sprites.Background;
 import ru.geekbrains.stargame.sprites.Bullet;
+import ru.geekbrains.stargame.sprites.ButtonNewGame;
 import ru.geekbrains.stargame.sprites.Enemy;
 import ru.geekbrains.stargame.sprites.GameOver;
 import ru.geekbrains.stargame.sprites.ShipHero;
@@ -33,6 +35,7 @@ public class GameScreen extends BaseScreen
     private Texture         bg;
     private Background      background;
     private GameOver        gameOver;
+    private ButtonNewGame   buttonNewGame;
     private Music           fonMus;
     private Sound           shootSound;
     private Sound           bulletSound;
@@ -48,6 +51,12 @@ public class GameScreen extends BaseScreen
     private ExplosionPool   explosionPool;
 
     private State           state;
+    private final Game      game;
+
+    public GameScreen(Game game)
+    {
+        this.game = game;
+    }
 
     @Override
     public void show() {
@@ -88,6 +97,7 @@ public class GameScreen extends BaseScreen
         }
         shipHero.resize(worldBounds);
         gameOver.resize(worldBounds);
+        buttonNewGame.resize(worldBounds);
     }
 
     @Override
@@ -123,7 +133,11 @@ public class GameScreen extends BaseScreen
     public boolean touchDown(Vector2 touch, int pointer, int button)
     {
         if (state == State.PLAYING)
-        shipHero.touchDown(touch, pointer, button);
+            shipHero.touchDown(touch, pointer, button);
+        if (state == State.GAME_OVER)
+            {
+                buttonNewGame.touchDown(touch, pointer, button);
+            }
         return false;
     }
 
@@ -131,7 +145,11 @@ public class GameScreen extends BaseScreen
     public boolean touchUp(Vector2 touch, int pointer, int button)
     {
         if (state == State.PLAYING)
-        shipHero.touchUp(touch, pointer, button);
+            shipHero.touchUp(touch, pointer, button);
+        if (state == State.GAME_OVER)
+        {
+            buttonNewGame.touchUp(touch, pointer, button);
+        }
         return false;
     }
 
@@ -145,6 +163,7 @@ public class GameScreen extends BaseScreen
                 stars[i] =  new Star(atlas);
             }
             gameOver = new GameOver(atlas);
+            buttonNewGame = new ButtonNewGame(atlas, game);
             shipHero = new ShipHero(atlas, bulletPool, explosionPool, shootSound);
         } catch (GameException e)
         {
@@ -228,6 +247,7 @@ public class GameScreen extends BaseScreen
                 break;
             case GAME_OVER:
                 gameOver.draw(batch);
+                buttonNewGame.draw(batch);
                 break;
         }
         explosionPool.drawActiveSprites(batch);
