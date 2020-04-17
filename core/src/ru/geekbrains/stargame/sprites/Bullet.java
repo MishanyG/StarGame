@@ -11,14 +11,14 @@ public class Bullet extends Sprite
     private Rect worldBounds;
     private final Vector2 v = new Vector2();
     private int damage;
-    private Object owner;
+    private Sprite owner;
 
     public Bullet()
     {
         regions = new TextureRegion[1];
     }
 
-    public void set(Object owner, TextureRegion region, Vector2 pos0, Vector2 v0, float height, Rect worldBounds, int damage)
+    public void set(Sprite owner, TextureRegion region, Vector2 pos0, Vector2 v0, float height, Rect worldBounds, int damage)
     {
         this.owner = owner;
         this.regions[0] = region;
