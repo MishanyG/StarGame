@@ -69,6 +69,11 @@ public abstract class Ships extends Sprite
         }
     }
 
+    public void aid(int aid)
+    {
+        hp += aid;
+    }
+
     public int getDamage()
     {
         return damage;
