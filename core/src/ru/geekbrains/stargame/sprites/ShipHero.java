@@ -11,7 +11,8 @@ import ru.geekbrains.stargame.math.Rect;
 import ru.geekbrains.stargame.pool.BulletPool;
 import ru.geekbrains.stargame.pool.ExplosionPool;
 
-public class ShipHero extends Ships {
+public class ShipHero extends Ships
+{
     private static final int HP = 100;
 
     private static final int INV_POINT = -1;
@@ -22,11 +23,11 @@ public class ShipHero extends Ships {
     private int     rightPoint  = INV_POINT;
 
     public ShipHero(TextureAtlas atlas, BulletPool bulletPool, ExplosionPool explosionPool, Sound shootSound) throws GameException {
-        super(atlas.findRegion("main_ship"), 1, 2, 2);
+        super(atlas.findRegion("shipHero"), 1, 2, 2);
         this.bulletPool     = bulletPool;
         this.explosionPool  = explosionPool;
         this.shootSound     = shootSound;
-            bulletRegion    = atlas.findRegion("bulletMainShip");
+            bulletRegion    = atlas.findRegion("bullet1");
             bulletV         = new Vector2(0, 0.5f);
             bulletPos       = new Vector2();
             v0              = new Vector2(0.5f, 0);

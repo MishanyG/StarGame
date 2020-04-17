@@ -15,6 +15,7 @@ import ru.geekbrains.stargame.base.BaseScreen;
 import ru.geekbrains.stargame.base.Font;
 import ru.geekbrains.stargame.exception.GameException;
 import ru.geekbrains.stargame.math.Rect;
+import ru.geekbrains.stargame.math.Rnd;
 import ru.geekbrains.stargame.pool.BulletPool;
 import ru.geekbrains.stargame.pool.EnemyPool;
 import ru.geekbrains.stargame.pool.ExplosionPool;
@@ -22,6 +23,7 @@ import ru.geekbrains.stargame.sprites.Background;
 import ru.geekbrains.stargame.sprites.Bullet;
 import ru.geekbrains.stargame.sprites.ButtonNewGame;
 import ru.geekbrains.stargame.sprites.Enemy;
+import ru.geekbrains.stargame.sprites.FirstAid;
 import ru.geekbrains.stargame.sprites.GameOver;
 import ru.geekbrains.stargame.sprites.ShipHero;
 import ru.geekbrains.stargame.sprites.Star;
@@ -48,8 +50,10 @@ public class GameScreen extends BaseScreen
     private Sound           explosion;
 
     private TextureAtlas    atlas;
+    private TextureAtlas    atlasNew;
 
     private Star[]          stars;
+    private FirstAid        firstAid;
     private BulletPool      bulletPool;
     private ShipHero        shipHero;
     private EnemyPool       enemyPool;
@@ -65,11 +69,16 @@ public class GameScreen extends BaseScreen
     private StringBuilder   sbHP;
     private StringBuilder   sbLevel;
 
+    private float animateInterval;
+    private float animateTimer;
+    private boolean aid;
+
     @Override
     public void show() {
         super.show();
         bg              = new Texture("textures/bg.png");
         atlas           = new TextureAtlas(Gdx.files.internal("textures/mainAtlas.tpack"));
+        atlasNew        = new TextureAtlas(Gdx.files.internal("textures/Atlas/mainAtlasNew.tpack"));
         font            = new Font("font/font.fnt", "font/font.png");
         shootSound      = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.wav"));
         bulletSound     = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet.wav"));
@@ -80,15 +89,18 @@ public class GameScreen extends BaseScreen
         sbHP            = new StringBuilder();
         sbLevel         = new StringBuilder();
         bulletPool      = new BulletPool();
-        explosionPool   = new ExplosionPool(atlas, explosion);
+        explosionPool   = new ExplosionPool(atlasNew, explosion);
         enemyPool       = new EnemyPool(bulletPool, explosionPool, worldBounds);
-        enemyEmitter    = new EnemyEmitter(atlas, enemyPool, worldBounds, bulletSound);
+        enemyEmitter    = new EnemyEmitter(atlasNew, enemyPool, worldBounds, bulletSound);
         fonMus.setLooping(true);
         fonMus.play();
         initSprites();
         state           = State.PLAYING;
         prevState       = State.PLAYING;
         frags           = 0;
+        animateInterval = Rnd.nextFloat(10f, 100f);
+        animateTimer    = Rnd.nextFloat(0f, 5f);
+        aid             = false;
     }
 
     public void startNewGame()
@@ -99,6 +111,7 @@ public class GameScreen extends BaseScreen
         bulletPool.freeAllActiveObjects();
         enemyPool.freeAllActiveObjects();
         explosionPool.freeAllActiveObjects();
+        aid = true;
     }
 
     @Override
@@ -107,6 +120,7 @@ public class GameScreen extends BaseScreen
         prevState = state;
         state = State.PAUSE;
         fonMus.pause();
+        aid = false;
     }
 
     @Override
@@ -117,7 +131,8 @@ public class GameScreen extends BaseScreen
     }
 
     @Override
-    public void render(float delta) {
+    public void render(float delta)
+    {
         super.render(delta);
         update(delta);
         checkCollisions();
@@ -134,6 +149,7 @@ public class GameScreen extends BaseScreen
         {
             star.resize(worldBounds);
         }
+        firstAid.resize(worldBounds);
         shipHero.resize(worldBounds);
         gameOver.resize(worldBounds);
         buttonNewGame.resize(worldBounds);
@@ -144,6 +160,7 @@ public class GameScreen extends BaseScreen
     {
         bg.dispose();
         atlas.dispose();
+        atlasNew.dispose();
         bulletPool.dispose();
         enemyPool.dispose();
         fonMus.dispose();
@@ -198,9 +215,10 @@ public class GameScreen extends BaseScreen
             {
                 stars[i] =  new Star(atlas);
             }
+            firstAid = new FirstAid(atlasNew);
             gameOver = new GameOver(atlas);
-            buttonNewGame = new ButtonNewGame(atlas, this);
-            shipHero = new ShipHero(atlas, bulletPool, explosionPool, shootSound);
+            buttonNewGame = new ButtonNewGame(atlasNew, this);
+            shipHero = new ShipHero(atlasNew, bulletPool, explosionPool, shootSound);
         } catch (GameException e)
         {
             throw new RuntimeException(e);
@@ -223,6 +241,21 @@ public class GameScreen extends BaseScreen
         }
         else if (state == State.GAME_OVER)
             buttonNewGame.update(delta);
+        if (!aid)
+        {
+            animateTimer += delta;
+            if (animateTimer >= animateInterval)
+            {
+                animateInterval = Rnd.nextFloat(5f, 100f);
+                animateTimer = Rnd.nextFloat(0f, 5f);
+                aid = true;
+            }
+            firstAid.update(delta, false);
+        }
+        else firstAid.update(delta, true);
+        if (firstAid.pos.y < worldBounds.getBottom())
+            aid = false;
+
     }
 
     private void checkCollisions()
@@ -261,6 +294,14 @@ public class GameScreen extends BaseScreen
             }
         }
         if (shipHero.isDestroyed()) state = State.GAME_OVER;
+        if (!(firstAid.getOwner() == shipHero) && aid)
+        {
+            if (shipHero.isBulletCollision(firstAid))
+            {
+                shipHero.aid(FirstAid.getAid());
+                aid = false;
+            }
+        }
     }
 
     private void freeAllDestroyed()
@@ -281,9 +322,11 @@ public class GameScreen extends BaseScreen
         switch (state)
         {
             case PLAYING:
+                bulletPool.drawActiveSprites(batch);
+                if (aid)
+                    firstAid.draw(batch);
                 shipHero.draw(batch);
                 enemyPool.drawActiveSprites(batch);
-                bulletPool.drawActiveSprites(batch);
                 break;
             case GAME_OVER:
                 gameOver.draw(batch);

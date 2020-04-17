@@ -15,7 +15,7 @@ public class Explosion extends Sprite
 
     public Explosion(TextureAtlas atlas, Sound explosionSound) throws GameException
     {
-        super(atlas.findRegion("explosion"), 9, 9, 74);
+        super(atlas.findRegion("boom"), 6, 8, 48);
         this.exlosionSound = explosionSound;
     }
 

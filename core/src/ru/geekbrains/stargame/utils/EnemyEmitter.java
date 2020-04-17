@@ -16,8 +16,15 @@ public class EnemyEmitter
     private static final float  ENEMY_SMALL_BULLET_HEIGHT = 0.01f;
     private static final float  ENEMY_SMALL_BULLET_VY = -0.3f;
     private static final int    ENEMY_SMALL_DAMAGE = 1;
-    private static final float  ENEMY_SMALL_RELOAD_INTERVAL = 3f;
+    private static final float  ENEMY_SMALL_RELOAD_INTERVAL = 2f;
     private static final int    ENEMY_SMALL_HP = 1;
+
+    private static final float  ENEMY_MORE_HEIGHT = 0.15f;
+    private static final float  ENEMY_MORE_BULLET_HEIGHT = 0.02f;
+    private static final float  ENEMY_MORE_BULLET_VY = -0.3f;
+    private static final int    ENEMY_MORE_DAMAGE = 4;
+    private static final float  ENEMY_MORE_RELOAD_INTERVAL = 3f;
+    private static final int    ENEMY_MORE_HP = 4;
 
     private static final float  ENEMY_MEDIUM_HEIGHT = 0.15f;
     private static final float  ENEMY_MEDIUM_BULLET_HEIGHT = 0.02f;
@@ -42,10 +49,12 @@ public class EnemyEmitter
 
     private       TextureRegion bulletRegion;
     private final TextureRegion[] enemySmallRegion;
+    private final TextureRegion[] enemyMoreRegion;
     private final TextureRegion[] enemyMediumRegion;
     private final TextureRegion[] enemyBigRegion;
 
     private final Vector2 enemySmallV;
+    private final Vector2 enemyMoreV;
     private final Vector2 enemyMediumV;
     private final Vector2 enemyBigV;
 
@@ -55,15 +64,18 @@ public class EnemyEmitter
     {
         this.worldBounds        = worldBounds;
         this.shootSound         = shootSound;
-        this.bulletRegion       = atlas.findRegion("bulletEnemy");
+        this.bulletRegion       = atlas.findRegion("bullet2");
         TextureRegion enemy0    = atlas.findRegion("enemy0");
         this.enemySmallRegion   = Regions.split(enemy0, 1, 2, 2);
+        TextureRegion enemy3    = atlas.findRegion("enemy3");
+        this.enemyMoreRegion   = Regions.split(enemy3, 1, 2, 2);
         TextureRegion enemy1    = atlas.findRegion("enemy1");
         this.enemyMediumRegion  = Regions.split(enemy1, 1, 2, 2);
         TextureRegion enemy2    = atlas.findRegion("enemy2");
         this.enemyBigRegion     = Regions.split(enemy2, 1, 2, 2);
         this.enemyPool          = enemyPool;
         this.enemySmallV        = new Vector2(0, -0.2f);
+        this.enemyMoreV         = new Vector2(0, -0.07f);
         this.enemyMediumV       = new Vector2(0, -0.03f);
         this.enemyBigV          = new Vector2(0, -0.005f);
     }
@@ -77,9 +89,12 @@ public class EnemyEmitter
             generateTimer = 0f;
             Enemy enemy = enemyPool.obtain();
             float type = (float) Math.random();
-            if (type < 0.7f)
+            if (type < 0.6f)
                 enemy.set(enemySmallRegion, enemySmallV, bulletRegion, ENEMY_SMALL_BULLET_HEIGHT, ENEMY_SMALL_BULLET_VY,
                         ENEMY_SMALL_DAMAGE * level, ENEMY_SMALL_RELOAD_INTERVAL, shootSound, ENEMY_SMALL_HP, ENEMY_SMALL_HEIGHT);
+            else if (type < 0.7f)
+                enemy.set(enemyMoreRegion, enemyMoreV, bulletRegion, ENEMY_MORE_BULLET_HEIGHT, ENEMY_MORE_BULLET_VY,
+                        ENEMY_MORE_DAMAGE * level, ENEMY_MORE_RELOAD_INTERVAL, shootSound, ENEMY_MORE_HP, ENEMY_MORE_HEIGHT);
             else if (type < 0.85f)
                 enemy.set(enemyMediumRegion, enemyMediumV, bulletRegion, ENEMY_MEDIUM_BULLET_HEIGHT, ENEMY_MEDIUM_BULLET_VY,
                         ENEMY_MEDIUM_DAMAGE * level, ENEMY_MEDIUM_RELOAD_INTERVAL, shootSound, ENEMY_MEDIUM_HP, ENEMY_MEDIUM_HEIGHT);
