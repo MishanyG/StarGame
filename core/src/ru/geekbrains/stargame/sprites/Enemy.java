@@ -12,6 +12,7 @@ import ru.geekbrains.stargame.pool.ExplosionPool;
 public class Enemy extends Ships
 {
     private final Vector2 descentV;
+
     public Enemy(BulletPool bulletPool, ExplosionPool explosionPool, Rect worldBounds)
     {
         this.bulletPool = bulletPool;

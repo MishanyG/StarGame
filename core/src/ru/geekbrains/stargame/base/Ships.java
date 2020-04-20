@@ -13,7 +13,9 @@ import ru.geekbrains.stargame.sprites.Explosion;
 
 public abstract class Ships extends Sprite
 {
-    private static final float DAMAGE_ANIMATE_INTERVAL = 0.1f;
+    private static final float  DAMAGE_ANIMATE_INTERVAL = 0.1f;
+    private static final float  DELTA_COEFF = 1.2f;
+    private   float savedDelta  = 0f;
 
     protected Rect              worldBounds;
     protected BulletPool        bulletPool;
@@ -41,6 +43,8 @@ public abstract class Ships extends Sprite
     @Override
     public void update(float delta)
     {
+        if (savedDelta == 0f) savedDelta = delta;
+        if (delta > savedDelta * DELTA_COEFF) delta = savedDelta;
         pos.mulAdd(v, delta);
         damageAnimateTimer += delta;
         if (damageAnimateTimer >= DAMAGE_ANIMATE_INTERVAL) frame = 0;
@@ -65,8 +69,14 @@ public abstract class Ships extends Sprite
         }
     }
 
-    public int getDamage() {
+    public int getDamage()
+    {
         return damage;
+    }
+
+    public int getHp()
+    {
+        return hp;
     }
 
     protected void autoShoot (float delta)
