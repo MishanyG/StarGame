@@ -1,0 +1,87 @@
+
+mainAtlasNew.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+boom
+  rotate: false
+  xy: 1, 318
+  size: 900, 675
+  orig: 900, 675
+  offset: 0, 0
+  index: -1
+shipHero
+  rotate: false
+  xy: 1, 38
+  size: 336, 278
+  orig: 336, 278
+  offset: 0, 0
+  index: -1
+enemy3
+  rotate: false
+  xy: 339, 155
+  size: 396, 161
+  orig: 396, 161
+  offset: 0, 0
+  index: -1
+NewGame
+  rotate: false
+  xy: 339, 1
+  size: 400, 152
+  orig: 400, 152
+  offset: 0, 0
+  index: -1
+FirstAid
+  rotate: false
+  xy: 903, 873
+  size: 120, 120
+  orig: 120, 120
+  offset: 0, 0
+  index: -1
+GameOver
+  rotate: false
+  xy: 737, 181
+  size: 180, 135
+  orig: 180, 135
+  offset: 0, 0
+  index: -1
+bullet2
+  rotate: false
+  xy: 1, 15
+  size: 16, 21
+  orig: 16, 21
+  offset: 0, 0
+  index: -1
+bullet1
+  rotate: false
+  xy: 737, 159
+  size: 15, 20
+  orig: 15, 20
+  offset: 0, 0
+  index: -1
+
+mainAtlasNew2.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+enemy1
+  rotate: false
+  xy: 1, 376
+  size: 662, 459
+  orig: 662, 459
+  offset: 0, 0
+  index: -1
+enemy2
+  rotate: false
+  xy: 1, 1
+  size: 509, 373
+  orig: 509, 373
+  offset: 0, 0
+  index: -1
+enemy0
+  rotate: false
+  xy: 665, 481
+  size: 290, 354
+  orig: 290, 354
+  offset: 0, 0
+  index: -1
