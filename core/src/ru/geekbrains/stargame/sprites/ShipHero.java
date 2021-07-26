@@ -37,6 +37,19 @@ public class ShipHero extends Ships {
             animateInterval = 0.2f;
             animateTimer    = animateInterval;
     }
+
+    public void startNewGame(Rect worldBounds)
+    {
+        flushDestroy();
+        hp = HP;
+        pressLeft = false;
+        pressRight = false;
+        leftPoint = INV_POINT;
+        rightPoint = INV_POINT;
+        stop();
+        pos.x = worldBounds.pos.x;
+    }
+
     @Override
     public void resize(Rect worldBounds)
     {
