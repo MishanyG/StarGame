@@ -2,6 +2,7 @@ package ru.geekbrains.stargame.screen;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -20,6 +21,7 @@ public class MenuScreen extends BaseScreen {
     private static final int STAR_COUNT = 256;
 
     private final Game game;
+    private Music fonMus;
 
     private Texture bg;
     private Background background;
@@ -39,6 +41,7 @@ public class MenuScreen extends BaseScreen {
         super.show();
         bg = new Texture("textures/bg.png");
         atlas = new TextureAtlas(Gdx.files.internal("textures/menuAtlas.tpack"));
+        fonMus = Gdx.audio.newMusic(Gdx.files.internal("sounds/music.mp3"));
         initSprites();
     }
 
@@ -53,6 +56,7 @@ public class MenuScreen extends BaseScreen {
         batch.dispose();
         bg.dispose();
         atlas.dispose();
+        fonMus.dispose();
         super.dispose();
     }
 
@@ -92,6 +96,7 @@ public class MenuScreen extends BaseScreen {
         } catch (GameException e) {
             throw new RuntimeException(e);
         }
+        fonMus.play();
     }
 
     private void update(float delta) {
