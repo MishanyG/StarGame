@@ -19,7 +19,7 @@ public class ButtonNewGame extends ScaledButton
 
     public ButtonNewGame(TextureAtlas atlas, GameScreen gameScreen) throws GameException
     {
-        super(atlas.findRegion("button_new_game"));
+        super(atlas.findRegion("NewGame"));
         this.gameScreen = gameScreen;
         this.isGrow = true;
     }
@@ -55,7 +55,7 @@ public class ButtonNewGame extends ScaledButton
     @Override
     public void resize(Rect worldBounds)
     {
-        setHeightProportion(0.07f);
+        setHeightProportion(0.15f);
         setTop(-0.025f);
     }
 
