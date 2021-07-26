@@ -1,47 +1,32 @@
 package ru.geekbrains.stargame;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import java.awt.Image;
+import ru.geekbrains.stargame.base.Logo;
+import ru.geekbrains.stargame.screen.MenuScreen;
 
-import javax.swing.text.html.ImageView;
-
-import static com.badlogic.gdx.Input.Keys.R;
-
-public class StarGame extends ApplicationAdapter {
+public class StarGame extends Game
+{
+	MenuScreen menuScreen;
 	SpriteBatch batch;
-	Texture img;
-	//TextureRegion region;
+	Logo logo;
 
 	@Override
-	public void create() {
+	public void create()
+	{
+		menuScreen = new MenuScreen();
 		batch = new SpriteBatch();
-		img = new Texture("sky.jpg"); // Выбираем изображение для фона
-		//region = new TextureRegion(img, 10, 10, 150, 150);
+		logo = new Logo();
+		logo.show();
 	}
-
 	@Override
 	public void render()
 	{
-		//Gdx.gl.glClearColor(0.5f, 0.7f, 0.8f, 1);
-		//Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.begin();
-		//batch.setColor(1, 1, 1, 1);
-		batch.draw(img, 0, 0);  // Отрисовка фона
-		//batch.setColor(0.1f, 0.3f, 0.7f, 0.4f);
-		//batch.draw(region, 200, 200);
-		batch.end();
-	}
-
-	@Override
-	public void dispose() {
-		batch.dispose();
-		img.dispose();
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		menuScreen.render(batch);
+		logo.render(batch);
 	}
 }
